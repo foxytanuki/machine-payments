@@ -13,6 +13,7 @@ Issues should be relevant to this sample repository specifically. For broader qu
 - [Stripe Support](https://support.stripe.com/)
 - [Stripe Discord](https://stripe.com/go/developer-chat)
 - [x402 Documentation](https://www.x402.org/)
+- [MPP Documentation](https://mpp.tempo.xyz/)
 
 ## Code Review
 
@@ -24,30 +25,36 @@ All submissions, including those by project members, require review. We use GitH
 
 ```
 machine-payments/
-├── x402-rest/          # REST API integration
+├── x402/               # x402 protocol integration
 │   └── server/
 │       ├── python/
 │       └── node-typescript/
-└── x402-mcp/           # MCP server integration
+└── mpp/                # MPP protocol integration
     └── server/
-        ├── python/
         └── node-typescript/
 ```
 
 ### Running Samples Locally
 
-**Python:**
+**x402 — Python:**
 ```bash
-cd x402-rest/server/python
+cd x402/server/python
 uv sync
-uv run python src/server.py
+uv run python main.py
 ```
 
-**TypeScript:**
+**x402 — TypeScript:**
 ```bash
-cd x402-rest/server/node-typescript
+cd x402/server/node-typescript
 pnpm install
-pnpm run server
+pnpm run dev
+```
+
+**MPP — TypeScript:**
+```bash
+cd mpp/server/node-typescript
+pnpm install
+pnpm run dev
 ```
 
 ### Testing
@@ -62,4 +69,5 @@ Before submitting a PR, ensure:
 
 - [Stripe API Documentation](https://stripe.com/docs/api)
 - [x402 Protocol Specification](https://www.x402.org/)
+- [Machine Payments Protocol](https://mpp.tempo.xyz/)
 - [Model Context Protocol](https://modelcontextprotocol.io/)

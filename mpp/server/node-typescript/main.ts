@@ -1,0 +1,130 @@
+import crypto from "node:crypto";
+import { serve } from "@hono/node-server";
+import { config } from "dotenv";
+import { Hono } from "hono";
+import { Credential } from "mppx";
+import { Mppx, tempo } from "mppx/server";
+import Stripe from "stripe";
+config();
+
+const app = new Hono();
+
+// Stripe handles payment processing and provides the crypto deposit address.
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error("❌ STRIPE_SECRET_KEY environment variable is required");
+  process.exit(1);
+}
+
+const PATH_USD = "0x20c0000000000000000000000000000000000000";
+
+// Secret used to secure payment challenges
+// https://mpp.dev/protocol/challenges#challenge-binding
+const mppSecretKey = crypto.randomBytes(32).toString("base64");
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+  // @ts-ignore
+  apiVersion: "2026-03-04.preview",
+  appInfo: {
+    name: "stripe-samples/machine-payments",
+    url: "https://github.com/stripe-samples/machine-payments",
+    version: "1.0.0",
+  },
+});
+
+const validPayToAddresses = new Set<string>();
+
+async function createPayToAddress(request: Request): Promise<`0x${string}`> {
+  // If a payment header exists, extract the recipient from the credential
+  const authHeader = request.headers.get("authorization");
+  if (authHeader && Credential.extractPaymentScheme(authHeader)) {
+    const credential = Credential.fromRequest(request);
+    const toAddress = credential.challenge.request.recipient as `0x${string}`;
+
+    if (!toAddress) {
+      throw new Error("PaymentIntent did not return expected crypto deposit details");
+    }
+    if (!validPayToAddresses.has(toAddress)) {
+      throw new Error("Invalid payTo address: not found in server cache");
+    }
+    return toAddress;
+  }
+
+  // Create a new PaymentIntent to get a fresh crypto deposit address
+  const decimals = 6;
+  const amountInCents = Number(10000) / 10 ** (decimals - 2);
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amountInCents,
+    currency: "usd",
+    customer: "cus_U88wwD8ZhljIkX",
+    payment_method_types: ["crypto"],
+    payment_method_data: {
+      type: "crypto",
+    },
+    payment_method_options: {
+      crypto: {
+        mode: "deposit",
+        deposit_options: {
+          networks: ["tempo"],
+        },
+      } as Stripe.PaymentIntentCreateParams.PaymentMethodOptions.Crypto,
+    },
+    confirm: true,
+  });
+
+  if (!paymentIntent.next_action || !("crypto_display_details" in paymentIntent.next_action)) {
+    throw new Error("PaymentIntent did not return expected crypto deposit details");
+  }
+
+  const depositDetails = paymentIntent.next_action.crypto_display_details as unknown as {
+    deposit_addresses?: Record<string, { address?: string }>;
+  };
+  const payToAddress = depositDetails.deposit_addresses?.tempo?.address;
+
+  if (!payToAddress) {
+    throw new Error("PaymentIntent did not return expected crypto deposit details");
+  }
+
+  console.log(
+    `Created PaymentIntent ${paymentIntent.id} for $${(amountInCents / 100).toFixed(
+      2,
+    )} -> ${payToAddress}`,
+  );
+
+  validPayToAddresses.add(payToAddress);
+  return payToAddress as `0x${string}`;
+}
+
+app.get("/paid", async (c) => {
+  const request = c.req.raw;
+  const recipientAddress = await createPayToAddress(request);
+
+  const mppx = Mppx.create({
+    methods: [
+      tempo.charge({
+        currency: PATH_USD,
+        recipient: recipientAddress,
+        testnet: true,
+      }),
+    ],
+    secretKey: mppSecretKey,
+  });
+
+  const response = await mppx.charge({
+    amount: "0.01",
+    recipient: recipientAddress,
+  })(request);
+
+  if (response.status === 402) return response.challenge;
+
+  return response.withReceipt(Response.json({ foo: "bar" }));
+});
+
+serve({
+  fetch: app.fetch,
+  port: 4242,
+});
+
+console.log("Server listening at http://localhost:4242");
+
+export { app };

@@ -1,8 +1,8 @@
 version: 2
 updates:
-  # Python - x402-rest
+  # Python - x402
   - package-ecosystem: "pip"
-    directory: "/x402-rest/server/python"
+    directory: "/x402/server/python"
     schedule:
       interval: "weekly"
       day: "thursday"
@@ -10,19 +10,9 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
 
-  # Python - x402-mcp
-  - package-ecosystem: "pip"
-    directory: "/x402-mcp/server/python"
-    schedule:
-      interval: "weekly"
-      day: "thursday"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-patch"]
-
-  # Node - x402-rest
+  # Node - x402
   - package-ecosystem: "npm"
-    directory: "/x402-rest/server/node-typescript"
+    directory: "/x402/server/node-typescript"
     schedule:
       interval: "weekly"
       day: "thursday"
@@ -30,9 +20,9 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-patch"]
 
-  # Node - x402-mcp
+  # Node - mpp
   - package-ecosystem: "npm"
-    directory: "/x402-mcp/server/node-typescript"
+    directory: "/mpp/server/node-typescript"
     schedule:
       interval: "weekly"
       day: "thursday"

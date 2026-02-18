@@ -1,0 +1,38 @@
+[project]
+name = "mpp-rest-python"
+version = "1.0.0"
+description = "MPP REST API sample with FastAPI and Stripe Payment Tokens"
+requires-python = ">=3.12"
+dependencies = [
+    "pympp[tempo]",
+    "fastapi>=0.115.0",
+    "python-dotenv>=1.0.0",
+    "stripe>=11.0.0",
+    "uvicorn>=0.30.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.27.0",
+    "pyright>=1.1.390",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]

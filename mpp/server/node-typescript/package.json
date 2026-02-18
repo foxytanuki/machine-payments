@@ -1,0 +1,27 @@
+{
+  "name": "mpp-rest-node-typescript",
+  "private": true,
+  "type": "module",
+  "description": "MPP REST API sample with Stripe Payment Tokens using Hono",
+  "scripts": {
+    "dev": "tsx main.ts",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "dotenv": "^16.6.1",
+    "hono": "^4.11.7",
+    "mppx": "^0.1.0",
+    "stripe": "^20.4.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/node": "^22.19.8",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
+  }
+}

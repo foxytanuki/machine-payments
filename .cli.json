@@ -3,7 +3,15 @@
   "configureDotEnv": true,
   "integrations": [
     {
-      "name": "main",
+      "name": "x402",
+      "clients": [],
+      "servers": [
+        "node-typescript",
+        "python"
+      ]
+    },
+    {
+      "name": "mpp",
       "clients": [],
       "servers": [
         "node-typescript",

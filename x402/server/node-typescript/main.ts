@@ -1,10 +1,10 @@
-import Stripe from "stripe";
-import { config } from "dotenv";
-import { paymentMiddleware, x402ResourceServer } from "@x402/hono";
-import { ExactEvmScheme } from "@x402/evm/exact/server";
-import { HTTPFacilitatorClient } from "@x402/core/server";
-import { Hono } from "hono";
 import { serve } from "@hono/node-server";
+import { HTTPFacilitatorClient } from "@x402/core/server";
+import { ExactEvmScheme } from "@x402/evm/exact/server";
+import { paymentMiddleware, x402ResourceServer } from "@x402/hono";
+import { config } from "dotenv";
+import { Hono } from "hono";
+import Stripe from "stripe";
 config();
 
 const app = new Hono();
@@ -16,7 +16,8 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2026-01-28.clover",
+  // @ts-ignore
+  apiVersion: "2026-03-04.preview",
   appInfo: {
     name: "stripe-samples/machine-payments",
     url: "https://github.com/stripe-samples/machine-payments",
@@ -38,12 +39,11 @@ const validPayToAddresses = new Set<string>();
 // This function determines where payments should be sent. It either:
 // 1. Extracts the address from an existing payment header (for retry/verification), or
 // 2. Creates a new Stripe PaymentIntent to generate a fresh deposit address.
+// biome-ignore lint/suspicious/noExplicitAny: context type comes from x402 middleware
 async function createPayToAddress(context: any): Promise<string> {
   // If a payment header exists, extract the destination address from it
   if (context.paymentHeader) {
-    const decoded = JSON.parse(
-      Buffer.from(context.paymentHeader, "base64").toString(),
-    );
+    const decoded = JSON.parse(Buffer.from(context.paymentHeader, "base64").toString());
     const toAddress = decoded.payload?.authorization?.to;
 
     if (toAddress && typeof toAddress === "string") {
@@ -53,14 +53,12 @@ async function createPayToAddress(context: any): Promise<string> {
       return toAddress.toLowerCase();
     }
 
-    throw new Error(
-      "PaymentIntent did not return expected crypto deposit details",
-    );
+    throw new Error("PaymentIntent did not return expected crypto deposit details");
   }
 
   // Create a new PaymentIntent to get a fresh crypto deposit address
   const decimals = 6; // USDC has 6 decimals
-  const amountInCents = Number(10000) / Math.pow(10, decimals - 2);
+  const amountInCents = Number(10000) / 10 ** (decimals - 2);
 
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amountInCents,
@@ -71,33 +69,29 @@ async function createPayToAddress(context: any): Promise<string> {
     },
     payment_method_options: {
       crypto: {
-        // @ts-ignore - Stripe crypto payments beta feature
-        mode: "custom",
-      },
+        mode: "deposit",
+        deposit_options: {
+          networks: ["base"],
+        },
+      } as Stripe.PaymentIntentCreateParams.PaymentMethodOptions.Crypto,
     },
     confirm: true,
   });
 
-  if (
-    !paymentIntent.next_action ||
-    !("crypto_collect_deposit_details" in paymentIntent.next_action)
-  ) {
-    throw new Error(
-      "PaymentIntent did not return expected crypto deposit details",
-    );
+  if (!paymentIntent.next_action || !("crypto_display_details" in paymentIntent.next_action)) {
+    throw new Error("PaymentIntent did not return expected crypto deposit details");
   }
 
   // Extract the Base network deposit address from the PaymentIntent
-  // @ts-ignore - crypto_collect_deposit_details is a beta feature
-  const depositDetails = paymentIntent.next_action
-    .crypto_collect_deposit_details as any;
-  const payToAddress = depositDetails.deposit_addresses["base"]
-    .address as string;
+  const depositDetails = paymentIntent.next_action.crypto_display_details as unknown as {
+    deposit_addresses: Record<string, { address: string }>;
+  };
+  const payToAddress = depositDetails.deposit_addresses.base.address;
 
   console.log(
-    `Created PaymentIntent ${paymentIntent.id} for $${(
-      amountInCents / 100
-    ).toFixed(2)} -> ${payToAddress}`,
+    `Created PaymentIntent ${paymentIntent.id} for $${(amountInCents / 100).toFixed(
+      2,
+    )} -> ${payToAddress}`,
   );
 
   validPayToAddresses.add(payToAddress.toLowerCase());
@@ -123,10 +117,7 @@ app.use(
       },
     },
     // Register the payment scheme handler for Base Sepolia
-    new x402ResourceServer(facilitatorClient).register(
-      "eip155:84532",
-      new ExactEvmScheme(),
-    ),
+    new x402ResourceServer(facilitatorClient).register("eip155:84532", new ExactEvmScheme()),
   ),
 );
 
@@ -142,4 +133,6 @@ serve({
   port: 4242,
 });
 
-console.log(`Server listening at http://localhost:4242`);
+console.log("Server listening at http://localhost:4242");
+
+export { app };
