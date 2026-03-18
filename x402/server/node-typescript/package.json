@@ -4,7 +4,8 @@
   "type": "module",
   "description": "x402 REST API sample with Stripe using Hono",
   "scripts": {
-    "dev": "tsx main.ts"
+    "dev": "tsx main.ts",
+    "build": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",
@@ -17,10 +18,15 @@
     "stripe": "^20.3.0",
     "viem": "^2.45.1"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
+  },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
     "@types/express": "^5.0.6",
     "@types/node": "^22.19.8",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
   }
 }

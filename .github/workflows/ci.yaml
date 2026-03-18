@@ -1,0 +1,110 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ci.yaml'
+      - 'mpp/server/**'
+      - 'x402/server/**'
+  pull_request:
+    paths:
+      - '.github/workflows/ci.yaml'
+      - 'mpp/server/**'
+      - 'x402/server/**'
+  workflow_dispatch:
+
+jobs:
+  node:
+    name: Node / ${{ matrix.project_name }} / Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project_name: mpp
+            project_path: mpp/server/node-typescript
+            node-version: '20'
+          - project_name: mpp
+            project_path: mpp/server/node-typescript
+            node-version: '22'
+          - project_name: x402
+            project_path: x402/server/node-typescript
+            node-version: '20'
+          - project_name: x402
+            project_path: x402/server/node-typescript
+            node-version: '22'
+    defaults:
+      run:
+        working-directory: ${{ matrix.project_path }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: make lint
+
+      - name: Check formatting
+        run: pnpm exec biome format .
+
+      - name: Typecheck
+        run: make typecheck
+
+      - name: Test
+        run: make test
+
+  python:
+    name: Python / ${{ matrix.project_name }} / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project_name: mpp
+            project_path: mpp/server/python
+            python-version: '3.12'
+          - project_name: x402
+            project_path: x402/server/python
+            python-version: '3.10'
+          - project_name: x402
+            project_path: x402/server/python
+            python-version: '3.11'
+          - project_name: x402
+            project_path: x402/server/python
+            python-version: '3.12'
+    defaults:
+      run:
+        working-directory: ${{ matrix.project_path }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Setup Python
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --frozen --python ${{ matrix.python-version }}
+
+      - name: Lint
+        run: make lint
+
+      - name: Typecheck
+        run: make typecheck
+
+      - name: Test
+        run: make test
