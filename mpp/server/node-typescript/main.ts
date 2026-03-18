@@ -6,6 +6,7 @@ import { Credential } from "mppx";
 import { Mppx, tempo } from "mppx/server";
 import NodeCache from "node-cache";
 import Stripe from "stripe";
+
 config();
 
 const app = new Hono();
@@ -23,7 +24,7 @@ const PATH_USD = "0x20c0000000000000000000000000000000000000";
 const mppSecretKey = crypto.randomBytes(32).toString("base64");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  // @ts-ignore
+  // @ts-expect-error
   apiVersion: "2026-03-04.preview",
   appInfo: {
     name: "stripe-samples/machine-payments",

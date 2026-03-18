@@ -18,17 +18,19 @@ vi.mock("@x402/hono", () => ({
   paymentMiddleware: vi.fn().mockReturnValue(async (_c: unknown, next: () => Promise<void>) => {
     await next();
   }),
-  x402ResourceServer: vi.fn().mockReturnValue({
-    register: vi.fn().mockReturnThis(),
-  }),
+  x402ResourceServer: vi.fn().mockImplementation(
+    class {
+      register = vi.fn().mockReturnThis();
+    },
+  ),
 }));
 
 vi.mock("@x402/evm/exact/server", () => ({
-  ExactEvmScheme: vi.fn(),
+  ExactEvmScheme: vi.fn().mockImplementation(class {}),
 }));
 
 vi.mock("@x402/core/server", () => ({
-  HTTPFacilitatorClient: vi.fn(),
+  HTTPFacilitatorClient: vi.fn().mockImplementation(class {}),
 }));
 
 let app: Hono;
