@@ -7,6 +7,7 @@ from typing import Any, cast
 
 import stripe
 import uvicorn
+from cachetools import TTLCache
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from x402.http import FacilitatorConfig, HTTPFacilitatorClient, PaymentOption
@@ -46,7 +47,9 @@ facilitator = HTTPFacilitatorClient(FacilitatorConfig(url=FACILITATOR_URL))
 server = x402ResourceServer(facilitator)
 server.register("eip155:84532", ExactEvmServerScheme())  # type: ignore[arg-type]
 
-valid_pay_to_addresses: set[str] = set()
+# In-memory cache for deposit addresses (TTL: 5 minutes, max 1024 entries)
+# NOTE: For production, use a distributed cache like Redis instead of cachetools
+payment_cache: TTLCache[str, bool] = TTLCache(maxsize=1024, ttl=300)
 
 
 async def create_pay_to_address(context: Any) -> str:
@@ -70,9 +73,9 @@ async def create_pay_to_address(context: Any) -> str:
             debug_print(f"Extracted to_address from payment_header: {to_address}")
 
             if to_address and isinstance(to_address, str):
-                if to_address.lower() not in valid_pay_to_addresses:
+                if to_address.lower() not in payment_cache:
                     debug_print(
-                        f"Address {to_address.lower()} not found in valid_pay_to_addresses: {valid_pay_to_addresses!r}"  # noqa: E501
+                        f"Address {to_address.lower()} not found in payment_cache"
                     )
                     raise ValueError("Invalid payTo address: not found in server cache")
                 debug_print(f"Returning existing to_address: {to_address.lower()}")
@@ -140,8 +143,8 @@ async def create_pay_to_address(context: Any) -> str:
         f"for ${amount_in_cents / 100:.2f} -> {pay_to_address}"
     )
 
-    valid_pay_to_addresses.add(pay_to_address.lower())
-    debug_print(f"Added {pay_to_address.lower()} to valid_pay_to_addresses")
+    payment_cache[pay_to_address.lower()] = True
+    debug_print(f"Added {pay_to_address.lower()} to payment_cache")
 
     return pay_to_address.lower()
 

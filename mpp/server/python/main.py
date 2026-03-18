@@ -3,6 +3,7 @@ from typing import Any, cast
 
 import stripe
 import uvicorn
+from cachetools import TTLCache
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -33,7 +34,9 @@ stripe.set_app_info(
 # https://mpp.dev/protocol/challenges#challenge-binding
 mpp_secret_key = os.urandom(32).hex()
 
-valid_pay_to_addresses: set[str] = set()
+# In-memory cache for deposit addresses (TTL: 5 minutes, max 1024 entries)
+# NOTE: For production, use a distributed cache like Redis instead of cachetools
+payment_cache: TTLCache[str, bool] = TTLCache(maxsize=1024, ttl=300)
 
 
 def _extract_recipient_from_authorization(authorization: str | None) -> str | None:
@@ -46,7 +49,7 @@ def _extract_recipient_from_authorization(authorization: str | None) -> str | No
 
     if to_address and isinstance(to_address, str):
         normalized = to_address.lower()
-        if normalized not in valid_pay_to_addresses:
+        if normalized not in payment_cache:
             raise ValueError("Invalid payTo address: not found in server cache")
         return normalized
 
@@ -104,7 +107,7 @@ async def create_pay_to_address(request: Request) -> str:
     )
 
     normalized = pay_to_address.lower()
-    valid_pay_to_addresses.add(normalized)
+    payment_cache[normalized] = True
     return normalized
 
 
