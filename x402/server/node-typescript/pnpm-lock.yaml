@@ -21,8 +21,8 @@ importers:
         specifier: ^2.2.0
         version: 2.6.0(typescript@5.9.3)
       '@x402/hono':
-        specifier: ^2.2.0
-        version: 2.6.0(ethers@6.16.0)(hono@4.12.7)(typescript@5.9.3)
+        specifier: ^2.7.0
+        version: 2.7.0(ethers@6.16.0)(hono@4.12.7)(typescript@5.9.3)
       dotenv:
         specifier: ^16.6.1
         version: 16.6.1
@@ -292,6 +292,10 @@ packages:
     resolution: {integrity: sha512-k11yZxZg+t+gWvBbIswW0yoJlu8cHOC7dhunwOzoWH/mXGBiYyR4YY6hAEK/3EUs4UpB8la1RfdRpeGsFHkWsA==}
     engines: {node: ^14.21.3 || >=16}
 
+  '@noble/curves@1.9.7':
+    resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
+    engines: {node: ^14.21.3 || >=16}
+
   '@noble/hashes@1.3.2':
     resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
     engines: {node: '>= 16'}
@@ -523,19 +527,25 @@ packages:
   '@x402/core@2.6.0':
     resolution: {integrity: sha512-ISC/JeVss6xlKvor2rp18tJf9K5OQlIDDfZW1VZJQGDI2F4gy+HWxxkFfcQalCsPp4YUlwqh0YOkUxP+LTZWVg==}
 
+  '@x402/core@2.7.0':
+    resolution: {integrity: sha512-2l1QaRO50qtWpnTJed45HtGRAUp3z2Mep1caNCuaNBzeiE8OfWfuXmip+ujgp3vWZHxRqag221aRSnKbA6gDaQ==}
+
   '@x402/evm@2.6.0':
     resolution: {integrity: sha512-wPkNHf483gie1Up2sJSvERnW+VIEvMoT1KRXr09wSoSWgelglsJm+ug3gPPXKnT3C6AcmNAKZ12rBnu9Paff7g==}
 
   '@x402/extensions@2.6.0':
     resolution: {integrity: sha512-aLY9xAOOiRLKDN9HT2r9TYUXbD+IsoBces9qPZNVJGO2TBi2rfmbIBc3pcKCtWKn3iTvG2QFr3gpOFdpJRzqww==}
 
+  '@x402/extensions@2.7.0':
+    resolution: {integrity: sha512-aNi3sVhTiGqeNJgIzYAqM51zum9wu9P2wBTBYFbv1VFdiO+/u4qKNJMNiDdpC4PYtyLhDpZFx0Fc1j7wExmoUw==}
+
   '@x402/fetch@2.6.0':
     resolution: {integrity: sha512-OnHXw/mv76ig4UBJEgfQIWHSWcrgIOT2i8RxEuGl12QtaYwSgBcgDub2GdllL/iIB9OneM1m0UWlrPh23JdVjQ==}
 
-  '@x402/hono@2.6.0':
-    resolution: {integrity: sha512-Wt+7Ik6gnVNEY57O+A8/hueL9j+DvbNtHvvqKkTvpq6gadvU2ZtOn++0sWtDIFKRaTq3MVix/rWKlNCRoG0hDQ==}
+  '@x402/hono@2.7.0':
+    resolution: {integrity: sha512-6TKFF0pq7iMjJ+U3l7HeeVxEzmQuyTO2QUl6iszsTgMP9w4TEgXdMScJ+YQ4v6WrxFS1icwImbwn1K7MX/RLlg==}
     peerDependencies:
-      '@x402/paywall': 2.6.0
+      '@x402/paywall': ^2.7.0
       hono: ^4.0.0
     peerDependenciesMeta:
       '@x402/paywall':
@@ -647,6 +657,9 @@ packages:
     resolution: {integrity: sha512-I1fSfDCZL5P0v33sVqeTDSpcstAg/N+wF5HS033mogOVIp4B+oHC7oOCsA3axAbBSGTJ8QubbNmnIRN/h8U7hg==}
     peerDependencies:
       ws: '*'
+
+  jose@5.10.0:
+    resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
 
   js-tokens@9.0.1:
     resolution: {integrity: sha512-mxa9E9ITFOt0ban3j6L5MpjwegGz6lBQmM1IJkWeBZGcMxto50+eWdjC/52xDbS2vy0k7vIMK0Fe2wfL9OQSpQ==}
@@ -1038,6 +1051,10 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
+  '@noble/curves@1.9.7':
+    dependencies:
+      '@noble/hashes': 1.8.0
+
   '@noble/hashes@1.3.2': {}
 
   '@noble/hashes@1.8.0': {}
@@ -1250,6 +1267,10 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
+  '@x402/core@2.7.0':
+    dependencies:
+      zod: 3.25.76
+
   '@x402/evm@2.6.0(ethers@6.16.0)(typescript@5.9.3)':
     dependencies:
       '@x402/core': 2.6.0
@@ -1277,6 +1298,23 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@x402/extensions@2.7.0(ethers@6.16.0)(typescript@5.9.3)':
+    dependencies:
+      '@noble/curves': 1.9.7
+      '@scure/base': 1.2.6
+      '@x402/core': 2.7.0
+      ajv: 8.18.0
+      jose: 5.10.0
+      siwe: 2.3.2(ethers@6.16.0)
+      tweetnacl: 1.0.3
+      viem: 2.47.1(typescript@5.9.3)(zod@3.25.76)
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - bufferutil
+      - ethers
+      - typescript
+      - utf-8-validate
+
   '@x402/fetch@2.6.0(typescript@5.9.3)':
     dependencies:
       '@x402/core': 2.6.0
@@ -1287,10 +1325,10 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@x402/hono@2.6.0(ethers@6.16.0)(hono@4.12.7)(typescript@5.9.3)':
+  '@x402/hono@2.7.0(ethers@6.16.0)(hono@4.12.7)(typescript@5.9.3)':
     dependencies:
-      '@x402/core': 2.6.0
-      '@x402/extensions': 2.6.0(ethers@6.16.0)(typescript@5.9.3)
+      '@x402/core': 2.7.0
+      '@x402/extensions': 2.7.0(ethers@6.16.0)(typescript@5.9.3)
       hono: 4.12.7
       zod: 3.25.76
     transitivePeerDependencies:
@@ -1409,6 +1447,8 @@ snapshots:
   isows@1.0.7(ws@8.18.3):
     dependencies:
       ws: 8.18.3
+
+  jose@5.10.0: {}
 
   js-tokens@9.0.1: {}
 
