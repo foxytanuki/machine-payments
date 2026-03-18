@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import { Hono } from "hono";
 import { Credential } from "mppx";
 import { Mppx, tempo } from "mppx/server";
+import NodeCache from "node-cache";
 import Stripe from "stripe";
 config();
 
@@ -31,7 +32,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   },
 });
 
-const validPayToAddresses = new Set<string>();
+// In-memory cache for deposit addresses (TTL: 5 minutes)
+// NOTE: For production, use a distributed cache like Redis instead of node-cache
+const paymentCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
 async function createPayToAddress(request: Request): Promise<`0x${string}`> {
   // If a payment header exists, extract the recipient from the credential
@@ -43,7 +46,7 @@ async function createPayToAddress(request: Request): Promise<`0x${string}`> {
     if (!toAddress) {
       throw new Error("PaymentIntent did not return expected crypto deposit details");
     }
-    if (!validPayToAddresses.has(toAddress)) {
+    if (!paymentCache.has(toAddress)) {
       throw new Error("Invalid payTo address: not found in server cache");
     }
     return toAddress;
@@ -91,7 +94,7 @@ async function createPayToAddress(request: Request): Promise<`0x${string}`> {
     )} -> ${payToAddress}`,
   );
 
-  validPayToAddresses.add(payToAddress);
+  paymentCache.set(payToAddress, true);
   return payToAddress as `0x${string}`;
 }
 

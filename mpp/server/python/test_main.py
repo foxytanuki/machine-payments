@@ -42,17 +42,17 @@ def test_extract_recipient_returns_none_for_no_header():
 
 
 def test_extract_recipient_with_valid_payment_header():
-    from main import _extract_recipient_from_authorization, valid_pay_to_addresses
+    from main import _extract_recipient_from_authorization, payment_cache
 
     address = "0xabc123"
-    valid_pay_to_addresses.add(address)
+    payment_cache[address] = True
 
     header = _make_payment_header(address)
     result = _extract_recipient_from_authorization(header)
     assert result == address
 
     # cleanup
-    valid_pay_to_addresses.discard(address)
+    payment_cache.pop(address, None)
 
 
 def test_extract_recipient_rejects_unknown_address():

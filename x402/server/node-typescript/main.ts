@@ -4,6 +4,7 @@ import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { paymentMiddleware, x402ResourceServer } from "@x402/hono";
 import { config } from "dotenv";
 import { Hono } from "hono";
+import NodeCache from "node-cache";
 import Stripe from "stripe";
 config();
 
@@ -34,7 +35,9 @@ if (!facilitatorUrl) {
 }
 const facilitatorClient = new HTTPFacilitatorClient({ url: facilitatorUrl });
 
-const validPayToAddresses = new Set<string>();
+// In-memory cache for deposit addresses (TTL: 5 minutes)
+// NOTE: For production, use a distributed cache like Redis instead of node-cache
+const paymentCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
 // This function determines where payments should be sent. It either:
 // 1. Extracts the address from an existing payment header (for retry/verification), or
@@ -47,7 +50,7 @@ async function createPayToAddress(context: any): Promise<string> {
     const toAddress = decoded.payload?.authorization?.to;
 
     if (toAddress && typeof toAddress === "string") {
-      if (!validPayToAddresses.has(toAddress.toLowerCase())) {
+      if (!paymentCache.has(toAddress.toLowerCase())) {
         throw new Error("Invalid payTo address: not found in server cache");
       }
       return toAddress.toLowerCase();
@@ -94,7 +97,7 @@ async function createPayToAddress(context: any): Promise<string> {
     )} -> ${payToAddress}`,
   );
 
-  validPayToAddresses.add(payToAddress.toLowerCase());
+  paymentCache.set(payToAddress.toLowerCase(), true);
   return payToAddress.toLowerCase();
 }
 
