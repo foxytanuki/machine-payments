@@ -10,16 +10,16 @@ importers:
     dependencies:
       '@hono/node-server':
         specifier: ^1.19.9
-        version: 1.19.9(hono@4.11.9)
+        version: 1.19.9(hono@4.12.8)
       dotenv:
         specifier: ^16.6.1
         version: 16.6.1
       hono:
-        specifier: ^4.11.7
-        version: 4.11.9
+        specifier: ^4.12.8
+        version: 4.12.8
       mppx:
         specifier: ^0.1.0
-        version: 0.1.1(hono@4.11.9)(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@4.3.6))
+        version: 0.1.1(hono@4.12.8)(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@4.3.6))
       stripe:
         specifier: ^20.4.1
         version: 20.4.1(@types/node@22.19.11)
@@ -538,8 +538,8 @@ packages:
   get-tsconfig@4.13.6:
     resolution: {integrity: sha512-shZT/QMiSHc/YBLxxOkMtgSid5HFoauqCE3/exfsEcwg1WkeqjG+V40yBbBrsD+jW2HDXcs28xOfcbm2jI8Ddw==}
 
-  hono@4.11.9:
-    resolution: {integrity: sha512-Eaw2YTGM6WOxA6CXbckaEvslr2Ne4NFsKrvc0v97JD5awbmeBLO5w9Ho9L9kmKonrwF9RJlW6BxT1PVv/agBHQ==}
+  hono@4.12.8:
+    resolution: {integrity: sha512-VJCEvtrezO1IAR+kqEYnxUOoStaQPGrCmX3j4wDTNOcD1uRPFpGlwQUIW8niPuvHXaTUxeOUl5MMDGrl+tmO9A==}
     engines: {node: '>=16.9.0'}
 
   isows@1.0.7:
@@ -895,9 +895,9 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@hono/node-server@1.19.9(hono@4.11.9)':
+  '@hono/node-server@1.19.9(hono@4.12.8)':
     dependencies:
-      hono: 4.11.9
+      hono: 4.12.8
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
@@ -1137,7 +1137,7 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
-  hono@4.11.9: {}
+  hono@4.12.8: {}
 
   isows@1.0.7(ws@8.18.3):
     dependencies:
@@ -1151,7 +1151,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  mppx@0.1.1(hono@4.11.9)(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@4.3.6)):
+  mppx@0.1.1(hono@4.12.8)(typescript@5.9.3)(viem@2.46.2(typescript@5.9.3)(zod@4.3.6)):
     dependencies:
       '@remix-run/fetch-proxy': 0.7.1
       '@remix-run/node-fetch-server': 0.13.0
@@ -1160,7 +1160,7 @@ snapshots:
       viem: 2.46.2(typescript@5.9.3)(zod@4.3.6)
       zod: 4.3.6
     optionalDependencies:
-      hono: 4.11.9
+      hono: 4.12.8
     transitivePeerDependencies:
       - typescript
 
