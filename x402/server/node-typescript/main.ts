@@ -6,6 +6,7 @@ import { config } from "dotenv";
 import { Hono } from "hono";
 import NodeCache from "node-cache";
 import Stripe from "stripe";
+
 config();
 
 const app = new Hono();
@@ -17,7 +18,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  // @ts-ignore
+  // @ts-expect-error
   apiVersion: "2026-03-04.preview",
   appInfo: {
     name: "stripe-samples/machine-payments",

@@ -8,7 +8,7 @@
     "build": "tsc --noEmit"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.9",
+    "@hono/node-server": "^1.19.10",
     "@x402/core": "^2.2.0",
     "@x402/evm": "^2.7.0",
     "@x402/fetch": "^2.2.0",
@@ -20,14 +20,17 @@
     "viem": "^2.45.1"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "esbuild"
+    ]
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.0",
+    "@biomejs/biome": "^2.4.7",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.0"
   }
 }

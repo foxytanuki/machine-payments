@@ -15,20 +15,22 @@ vi.spyOn(process, "exit").mockImplementation((() => {}) as never);
 // Mock stripe so we don't hit the real API
 vi.mock("stripe", () => {
   return {
-    default: vi.fn().mockImplementation(() => ({
-      paymentIntents: {
-        create: vi.fn().mockResolvedValue({
-          id: "pi_test_123",
-          next_action: {
-            crypto_display_details: {
-              deposit_addresses: {
-                tempo: { address: "0xtest123" },
+    default: vi.fn().mockImplementation(
+      class {
+        paymentIntents = {
+          create: vi.fn().mockResolvedValue({
+            id: "pi_test_123",
+            next_action: {
+              crypto_display_details: {
+                deposit_addresses: {
+                  tempo: { address: "0xtest123" },
+                },
               },
             },
-          },
-        }),
+          }),
+        };
       },
-    })),
+    ),
   };
 });
 
