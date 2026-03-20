@@ -12,8 +12,8 @@ importers:
         specifier: ^1.19.10
         version: 1.19.11(hono@4.12.7)
       '@x402/core':
-        specifier: ^2.2.0
-        version: 2.6.0
+        specifier: ^2.7.0
+        version: 2.7.0
       '@x402/evm':
         specifier: ^2.7.0
         version: 2.7.0(typescript@5.9.3)
@@ -685,9 +685,6 @@ packages:
 
   '@vitest/utils@4.1.0':
     resolution: {integrity: sha512-XfPXT6a8TZY3dcGY8EdwsBulFCIw+BeeX0RZn2x/BtiY/75YGh8FeWGG8QISN/WhaqSrE2OrlDgtF8q5uhOTmw==}
-
-  '@x402/core@2.6.0':
-    resolution: {integrity: sha512-ISC/JeVss6xlKvor2rp18tJf9K5OQlIDDfZW1VZJQGDI2F4gy+HWxxkFfcQalCsPp4YUlwqh0YOkUxP+LTZWVg==}
 
   '@x402/core@2.7.0':
     resolution: {integrity: sha512-2l1QaRO50qtWpnTJed45HtGRAUp3z2Mep1caNCuaNBzeiE8OfWfuXmip+ujgp3vWZHxRqag221aRSnKbA6gDaQ==}
@@ -1477,10 +1474,6 @@ snapshots:
       '@vitest/pretty-format': 4.1.0
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
-
-  '@x402/core@2.6.0':
-    dependencies:
-      zod: 3.25.76
 
   '@x402/core@2.7.0':
     dependencies:
