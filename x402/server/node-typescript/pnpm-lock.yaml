@@ -18,8 +18,8 @@ importers:
         specifier: ^2.7.0
         version: 2.7.0(typescript@5.9.3)
       '@x402/fetch':
-        specifier: ^2.2.0
-        version: 2.6.0(typescript@5.9.3)
+        specifier: ^2.7.0
+        version: 2.7.0(typescript@5.9.3)
       '@x402/hono':
         specifier: ^2.7.0
         version: 2.7.0(ethers@6.16.0)(hono@4.12.7)(typescript@5.9.3)
@@ -698,8 +698,8 @@ packages:
   '@x402/extensions@2.7.0':
     resolution: {integrity: sha512-aNi3sVhTiGqeNJgIzYAqM51zum9wu9P2wBTBYFbv1VFdiO+/u4qKNJMNiDdpC4PYtyLhDpZFx0Fc1j7wExmoUw==}
 
-  '@x402/fetch@2.6.0':
-    resolution: {integrity: sha512-OnHXw/mv76ig4UBJEgfQIWHSWcrgIOT2i8RxEuGl12QtaYwSgBcgDub2GdllL/iIB9OneM1m0UWlrPh23JdVjQ==}
+  '@x402/fetch@2.7.0':
+    resolution: {integrity: sha512-hkJvoVtYjybkhLk1K2kRB0aVVWaxz43qYBSGZo0wgnUuIUXzmArGohhM/VfG8kVqcl+NDIuCD8tFiKSONr9X6A==}
 
   '@x402/hono@2.7.0':
     resolution: {integrity: sha512-6TKFF0pq7iMjJ+U3l7HeeVxEzmQuyTO2QUl6iszsTgMP9w4TEgXdMScJ+YQ4v6WrxFS1icwImbwn1K7MX/RLlg==}
@@ -1513,9 +1513,9 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@x402/fetch@2.6.0(typescript@5.9.3)':
+  '@x402/fetch@2.7.0(typescript@5.9.3)':
     dependencies:
-      '@x402/core': 2.6.0
+      '@x402/core': 2.7.0
       viem: 2.47.1(typescript@5.9.3)(zod@3.25.76)
       zod: 3.25.76
     transitivePeerDependencies:
