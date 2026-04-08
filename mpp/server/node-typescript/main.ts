@@ -60,7 +60,6 @@ async function createPayToAddress(request: Request): Promise<`0x${string}`> {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: amountInCents,
     currency: "usd",
-    customer: "cus_U88wwD8ZhljIkX",
     payment_method_types: ["crypto"],
     payment_method_data: {
       type: "crypto",
