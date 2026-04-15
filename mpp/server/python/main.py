@@ -17,6 +17,11 @@ from mpp.server import Mpp  # pyright: ignore[reportPrivateImportUsage]
 
 load_dotenv()
 
+# Don't put any keys in code. Use an environment variable (as shown
+# here) or secrets vault to supply keys to your integration.
+#
+# See https://docs.stripe.com/keys-best-practices and find your
+# keys at https://dashboard.stripe.com/apikeys.
 # Stripe handles payment processing and provides the crypto deposit address.
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 if not STRIPE_SECRET_KEY:

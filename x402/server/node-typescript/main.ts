@@ -11,6 +11,11 @@ config();
 
 const app = new Hono();
 
+// Don't put any keys in code. Use an environment variable (as shown
+// here) or secrets vault to supply keys to your integration.
+//
+// See https://docs.stripe.com/keys-best-practices and find your
+// keys at https://dashboard.stripe.com/apikeys.
 // Stripe handles payment processing and provides the crypto deposit address.
 if (!process.env.STRIPE_SECRET_KEY) {
   console.error("❌ STRIPE_SECRET_KEY environment variable is required");
