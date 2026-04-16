@@ -15,8 +15,8 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
       '@x402/evm':
-        specifier: ^2.9.0
-        version: 2.9.0(typescript@6.0.2)
+        specifier: ^2.10.0
+        version: 2.10.0(typescript@6.0.2)
       '@x402/fetch':
         specifier: ^2.9.0
         version: 2.9.0(typescript@6.0.2)
@@ -686,11 +686,14 @@ packages:
   '@vitest/utils@4.1.0':
     resolution: {integrity: sha512-XfPXT6a8TZY3dcGY8EdwsBulFCIw+BeeX0RZn2x/BtiY/75YGh8FeWGG8QISN/WhaqSrE2OrlDgtF8q5uhOTmw==}
 
+  '@x402/core@2.10.0':
+    resolution: {integrity: sha512-n9Exnt1HN4LFaINaPYhk6Cy3ICBt0e46XN1Uo5i6efIZfIoqP6pY8ONSX/M9bU4F1fpvMj0JZ3xdcBZCiGInfw==}
+
   '@x402/core@2.9.0':
     resolution: {integrity: sha512-IqPITHYx6XHlgLPtparuKKwoB+3wQdgt0F+WUH1e3WHMeiWdp+xTtQDy+6yOKuObNFI1S1iVbQFz0GivR/Vv3w==}
 
-  '@x402/evm@2.9.0':
-    resolution: {integrity: sha512-qUhnKe1pym9a+7dzeK+6ripsddVsr+5PNcpQfTYK4dubW+1SR9MRx/O4PNRtedWoAxminqAwmCL5AQUiSVvKWA==}
+  '@x402/evm@2.10.0':
+    resolution: {integrity: sha512-iEGIgW5K3qM3d2S1wuBSGJ1Kfdctd+0LAN8l+33dbYZgdkvCvTDwBPjbojVJ9mXI0Zk2bt4hUpcoOgsdmr79BA==}
 
   '@x402/extensions@2.9.0':
     resolution: {integrity: sha512-Fk7MJFWSQtsRGGZcNpgwv8V6IG38USNciA5ImkF0InceWDfjMBq6b8GmksM+cVHAXQsMQYxw3HV8uhfwTPEGAQ==}
@@ -848,8 +851,8 @@ packages:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
 
-  postcss@8.5.9:
-    resolution: {integrity: sha512-7a70Nsot+EMX9fFU3064K/kdHWZqGVY+BADLyXc8Dfv+mTLLVl6JzJpPaCZ2kQL9gIJvKXSLMHhqdRRjwQeFtw==}
+  postcss@8.5.10:
+    resolution: {integrity: sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   punycode@2.3.1:
@@ -1483,13 +1486,17 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
+  '@x402/core@2.10.0':
+    dependencies:
+      zod: 3.25.76
+
   '@x402/core@2.9.0':
     dependencies:
       zod: 3.25.76
 
-  '@x402/evm@2.9.0(typescript@6.0.2)':
+  '@x402/evm@2.10.0(typescript@6.0.2)':
     dependencies:
-      '@x402/core': 2.9.0
+      '@x402/core': 2.10.0
       viem: 2.47.1(typescript@6.0.2)(zod@3.25.76)
       zod: 3.25.76
     transitivePeerDependencies:
@@ -1707,7 +1714,7 @@ snapshots:
 
   picomatch@4.0.4: {}
 
-  postcss@8.5.9:
+  postcss@8.5.10:
     dependencies:
       nanoid: 3.3.11
       picocolors: 1.1.1
@@ -1831,7 +1838,7 @@ snapshots:
       esbuild: 0.27.7
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
-      postcss: 8.5.9
+      postcss: 8.5.10
       rollup: 4.60.1
       tinyglobby: 0.2.16
     optionalDependencies:
