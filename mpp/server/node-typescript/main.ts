@@ -3,7 +3,7 @@ import { serve } from "@hono/node-server";
 import { config } from "dotenv";
 import { Hono } from "hono";
 import { Credential } from "mppx";
-import { Mppx, tempo } from "mppx/server";
+import { Mppx, stripe, tempo } from "mppx/server";
 import NodeCache from "node-cache";
 import Stripe from "stripe";
 
@@ -18,12 +18,13 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const PATH_USD = "0x20c0000000000000000000000000000000000000";
+const PRICE_USD = "1";
 
 // Secret used to secure payment challenges
 // https://mpp.dev/protocol/challenges#challenge-binding
 const mppSecretKey = crypto.randomBytes(32).toString("base64");
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   // @ts-expect-error
   apiVersion: "2026-03-04.preview",
   appInfo: {
@@ -54,10 +55,9 @@ async function createPayToAddress(request: Request): Promise<`0x${string}`> {
   }
 
   // Create a new PaymentIntent to get a fresh crypto deposit address
-  const decimals = 6;
-  const amountInCents = Number(10000) / 10 ** (decimals - 2);
+  const amountInCents = Number(PRICE_USD) * 100;
 
-  const paymentIntent = await stripe.paymentIntents.create({
+  const paymentIntent = await stripeClient.paymentIntents.create({
     amount: amountInCents,
     currency: "usd",
     payment_method_types: ["crypto"],
@@ -109,14 +109,19 @@ app.get("/paid", async (c) => {
         recipient: recipientAddress,
         testnet: true,
       }),
+      stripe.charge({
+        client: stripeClient,
+        networkId: process.env.STRIPE_NETWORK_ID!,
+        paymentMethodTypes: ["card", "link"],
+      }),
     ],
     secretKey: mppSecretKey,
   });
 
-  const response = await mppx.charge({
-    amount: "0.01",
-    recipient: recipientAddress,
-  })(request);
+  const response = await Mppx.compose(
+    mppx.tempo.charge({ amount: PRICE_USD, recipient: recipientAddress }),
+    mppx.stripe.charge({ amount: PRICE_USD, currency: "usd" }),
+  )(request);
 
   if (response.status === 402) return response.challenge;
 
