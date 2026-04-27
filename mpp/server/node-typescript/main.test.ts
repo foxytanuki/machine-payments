@@ -36,15 +36,21 @@ vi.mock("stripe", () => {
 
 // Mock mppx so we don't need real payment infra
 vi.mock("mppx/server", () => {
-  const charge = vi.fn().mockReturnValue(
-    vi.fn().mockResolvedValue({
-      status: 200,
-      withReceipt: (res: Response) => res,
-    }),
-  );
+  const chargeHandler = vi.fn().mockResolvedValue({
+    status: 200,
+    withReceipt: (res: Response) => res,
+  });
+  const methodCharge = vi.fn().mockReturnValue(chargeHandler);
   return {
     Mppx: {
-      create: vi.fn().mockReturnValue({ charge }),
+      create: vi.fn().mockReturnValue({
+        tempo: { charge: methodCharge },
+        stripe: { charge: methodCharge },
+      }),
+      compose: vi.fn().mockImplementation((...handlers: unknown[]) => handlers[0]),
+    },
+    stripe: {
+      charge: vi.fn().mockReturnValue({}),
     },
     tempo: {
       charge: vi.fn().mockReturnValue({}),
