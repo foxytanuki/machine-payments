@@ -74,3 +74,58 @@ make ci
 ```bash
 curl http://localhost:4242/paid
 ```
+
+This command only verifies the unpaid request path. A successful result is a
+`402 Payment Required` response with a `WWW-Authenticate: Payment` header and a
+JSON body containing `challenge.methodDetails.checkout_url`.
+
+## Manual sandbox workflow
+
+Use this workflow when validating the full HitPay MPP one-time payment flow:
+
+1. Start the sample server:
+
+```bash
+make run
+```
+
+2. In another terminal, verify that the endpoint emits a payment challenge:
+
+```bash
+curl -i http://localhost:4242/paid
+```
+
+Expected result: `402 Payment Required` with a HitPay sandbox checkout URL. This
+does not complete the payment; it only confirms that challenge creation works.
+
+3. Run the client:
+
+```bash
+make client
+```
+
+The client prints the checkout URL on its own line, then waits:
+
+```text
+Checkout URL:
+https://securecheckout.sandbox.hit-pay.com/...
+Complete the sandbox payment, then press Enter to continue...
+```
+
+4. Open the checkout URL in a browser and complete the sandbox payment.
+
+5. Return to the client terminal and press Enter. The client then polls the MPP
+broker, retries the paid request with the generated credential, verifies the
+receipt, and prints the result.
+
+Expected successful output includes:
+
+```text
+200 OK
+{ foo: 'bar' }
+Receipt claims: ...
+Receipt JWS: ...
+```
+
+If the client times out before payment completion, increase
+`HITPAY_MPP_TIMEOUT_MS` in the repository root `.env` file.
