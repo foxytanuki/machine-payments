@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "dotenvx run -f ../../../.env -- tsx main.ts",
     "client": "dotenvx run -f ../../../.env -- tsx client.ts",
+    "payment:simulate": "dotenvx run -f ../../../.env -- tsx simulate-crypto-deposit.ts",
     "wallet:address": "dotenvx run -f ../../../.env -- tsx wallet.ts address",
     "wallet:fund": "dotenvx run -f ../../../.env -- tsx wallet.ts fund",
     "build": "tsc --noEmit"

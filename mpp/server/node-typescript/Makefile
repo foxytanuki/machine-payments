@@ -1,4 +1,4 @@
-.PHONY: install run client wallet-address wallet-fund lint format typecheck test ci
+.PHONY: install run client payment-simulate wallet-address wallet-fund lint format typecheck test ci
 
 install:
 	pnpm install
@@ -8,6 +8,9 @@ run:
 
 client:
 	pnpm run client
+
+payment-simulate:
+	pnpm run payment:simulate -- $(PI) $(OUTCOME)
 
 wallet-address:
 	pnpm run wallet:address

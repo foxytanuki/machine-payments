@@ -7,5 +7,5 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": ["main.ts", "client.ts", "wallet.ts"]
+  "include": ["main.ts", "client.ts", "simulate-crypto-deposit.ts", "wallet.ts"]
 }

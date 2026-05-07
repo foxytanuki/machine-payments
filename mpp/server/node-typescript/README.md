@@ -63,6 +63,16 @@ make client
 pnpm run client -- http://localhost:4242/paid
 ```
 
+In Stripe sandbox mode, crypto PaymentIntents don't monitor testnet deposits
+automatically. After a local crypto payment succeeds, simulate settlement for the
+created PaymentIntent:
+
+```bash
+make payment-simulate PI=pi_...
+# or simulate failure
+make payment-simulate PI=pi_... OUTCOME=failed
+```
+
 ## Development commands
 
 - `make lint` — run lint and formatting checks without changing files
