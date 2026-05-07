@@ -1,129 +1,112 @@
-# MPP Crypto Headless Flow Worklog
+# MPP Crypto Payment Worklog
 
 Date: 2026-05-07
 
-## Context
+## Scope
 
-We tested the MPP TypeScript sample on a headless Ubuntu server. The standard `mppx account create` flow failed because it depends on an OS keychain/Secret Service backend. To keep the sample usable in server environments, we added an environment-variable based client wallet flow using `MPPX_PRIVATE_KEY`.
+This note records the practical flow for testing an MPP crypto payment against the TypeScript sample on Tempo testnet. It focuses only on the crypto payment path: server challenge, client payment credential, and Stripe sandbox settlement.
 
-## Changes made
+## Environment
 
-- Added a headless MPP client script for `GET /paid`.
-- Added wallet helper scripts:
-  - `make wallet-address`
-  - `make wallet-fund`
-- Switched the TypeScript sample scripts to load the repository root `.env` through `dotenvx`.
-- Upgraded the MPP TypeScript sample from `mppx@0.6.8` to `mppx@0.6.15`.
-- Added missing `decimals` values to composed MPP charge handlers:
-  - Tempo charge: `decimals: 6`
-  - Stripe SPT charge: `decimals: 2`
-- Added a sandbox crypto deposit simulation helper:
-  - `make payment-simulate PI=pi_...`
-  - `make payment-simulate PI=pi_... OUTCOME=failed`
-- Documented the upstream issue in `docs/issues/mpp-typescript-decimals-runtime-error.md`.
+- Sample: `mpp/server/node-typescript`
+- Endpoint: `GET /paid`
+- Network: Tempo testnet / Moderato
+- Stripe mode: sandbox / test mode
+- Payment method: Stripe crypto PaymentIntent in deposit mode
 
-## Runtime issue found
+## Required configuration
 
-The TypeScript MPP server returned `500 Internal Server Error` before it could return a `402 Payment Required` challenge.
+The repository root `.env` needs:
 
-The root cause was missing `decimals` fields in route-level charge requests passed to `Mppx.compose`. On an unauthenticated request, `Mppx.compose` builds every advertised challenge, so both the Tempo and Stripe charge handlers need schema-valid request parameters.
+```env
+STRIPE_SECRET_KEY=sk_test_...
+MPPX_PRIVATE_KEY=0x...
+```
 
-Observed failure:
+`STRIPE_SECRET_KEY` lets the server create crypto PaymentIntents. `MPPX_PRIVATE_KEY` is the payer wallet key used by the local MPP client.
+
+## Wallet funding
+
+The payer wallet must have Tempo testnet funds before running the crypto payment client.
+
+```bash
+cd mpp/server/node-typescript
+make wallet-address
+make wallet-fund
+```
+
+The faucet helper can emit multiple transactions. That is expected because the faucet may fund more than one test asset needed for Tempo testnet payment flows.
+
+## Payment flow
+
+Start the paid resource server:
+
+```bash
+make run
+```
+
+The server listens on:
 
 ```text
-$ZodError: [
-  {
-    "expected": "number",
-    "code": "invalid_type",
-    "path": ["decimals"],
-    "message": "Invalid input"
-  }
-]
+http://localhost:4242/paid
 ```
 
-Fix:
+Run the MPP crypto client in another terminal:
 
-```ts
-mppx.tempo.charge({
-  amount: PRICE_USD,
-  decimals: 6,
-  recipient: recipientAddress,
-})
-
-mppx.stripe.charge({
-  amount: PRICE_USD,
-  currency: "usd",
-  decimals: 2,
-})
+```bash
+make client
 ```
 
-## Test flow
+Observed successful client response:
 
-1. Configure root `.env`:
+```text
+200 OK
+{"foo":"bar"}
+```
 
-   ```env
-   STRIPE_SECRET_KEY=sk_test_...
-   MPPX_PRIVATE_KEY=0x...
-   ```
+This confirms the MPP request flow completed locally:
 
-2. Fund the Tempo testnet wallet:
-
-   ```bash
-   cd mpp/server/node-typescript
-   make wallet-address
-   make wallet-fund
-   ```
-
-3. Run the paid server:
-
-   ```bash
-   make run
-   ```
-
-4. Run the MPP client in another terminal:
-
-   ```bash
-   make client
-   ```
-
-5. Observed successful MPP client response:
-
-   ```text
-   200 OK
-   {"foo":"bar"}
-   ```
+1. Client requested `GET /paid` without a payment credential.
+2. Server created a Stripe crypto PaymentIntent and returned an MPP `402 Payment Required` challenge.
+3. Client used `MPPX_PRIVATE_KEY` to satisfy the Tempo challenge.
+4. Client retried the request with an MPP credential.
+5. Server verified the credential and returned the paid response.
 
 ## Stripe sandbox settlement
 
-The local MPP credential flow succeeded, but the Stripe crypto PaymentIntent stayed in `requires_action` because Stripe sandbox PaymentIntents do not automatically monitor Tempo testnet deposits.
+After the local MPP flow succeeded, the Stripe PaymentIntent was still initially in `requires_action`:
 
-We added a simulation helper for the Stripe test helper endpoint:
+```text
+status=requires_action
+amount_received=0
+```
+
+This is expected in Stripe sandbox mode because crypto PaymentIntents do not automatically monitor Tempo testnet deposits. For sandbox testing, use Stripe's crypto deposit simulation helper:
 
 ```bash
 make payment-simulate PI=pi_...
 ```
 
-Successful simulation result:
-
-```json
-{
-  "status": "succeeded",
-  "amount_received": 100,
-  "latest_charge": "py_..."
-}
-```
-
-Failure simulation result:
+Successful simulation moved the PaymentIntent to:
 
 ```text
-status=requires_payment_method amount_received=0
+status=succeeded
+amount_received=100
+```
+
+Failure simulation is also available:
+
+```bash
+make payment-simulate PI=pi_... OUTCOME=failed
+```
+
+Observed failed simulation result:
+
+```text
+status=requires_payment_method
+amount_received=0
 ```
 
 ## Mainnet note
 
-In live mode on mainnet, Stripe is expected to monitor supported network deposits and advance the crypto PaymentIntent without the simulation helper. The helper is for sandbox/testnet development only.
-
-## Validation
-
-- `pnpm run build` passed.
-- `pnpm exec biome check .` passed functionally but reported a Biome schema version mismatch warning/info before the schema was updated.
+In live mode on supported mainnet networks, Stripe is expected to monitor real crypto deposits and advance the PaymentIntent without the sandbox simulation helper. The simulation helper is only for sandbox/testnet development.
