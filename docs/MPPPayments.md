@@ -77,6 +77,7 @@ export async function handler(request: Request) {
 
   const response = await mppx.charge({
     amount: '0.01',
+    decimals: 6,
     recipient: recipientAddress,
   })(request);
 

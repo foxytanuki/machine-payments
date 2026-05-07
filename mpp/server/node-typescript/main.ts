@@ -22,6 +22,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const PATH_USD = "0x20c0000000000000000000000000000000000000";
 const PRICE_USD = "1";
 const PRICE_DECIMALS = 6;
+const STRIPE_PRICE_DECIMALS = 2;
 const stripeNetworkId = process.env.STRIPE_NETWORK_ID || "internal";
 
 // Secret used to secure payment challenges
@@ -124,7 +125,7 @@ app.get("/paid", async (c) => {
 
   const response = await Mppx.compose(
     mppx.tempo.charge({ amount: PRICE_USD, decimals: PRICE_DECIMALS, recipient: recipientAddress }),
-    mppx.stripe.charge({ amount: PRICE_USD, currency: "usd" }),
+    mppx.stripe.charge({ amount: PRICE_USD, currency: "usd", decimals: STRIPE_PRICE_DECIMALS }),
   )(request);
 
   if (response.status === 402) return response.challenge;
