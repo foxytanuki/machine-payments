@@ -1,10 +1,19 @@
-.PHONY: install run lint format typecheck test ci
+.PHONY: install run client wallet-address wallet-fund lint format typecheck test ci
 
 install:
 	pnpm install
 
 run:
 	pnpm run dev
+
+client:
+	pnpm run client
+
+wallet-address:
+	pnpm run wallet:address
+
+wallet-fund:
+	pnpm run wallet:fund
 
 lint:
 	pnpm exec biome check .

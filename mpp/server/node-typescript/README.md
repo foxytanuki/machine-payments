@@ -16,8 +16,8 @@ These examples run on Tempo testnet. If you need testnet funds, you can use the 
 
 1. Configure environment variables:
 ```bash
-cp ../../../.env.template .env
-# Edit .env with your credentials
+cp ../../../.env.template ../../../.env
+# Edit ../../../.env with your credentials
 ```
 
 2. Install dependencies:
@@ -31,6 +31,36 @@ make install
 
 ```bash
 make run
+```
+
+## Headless test client
+
+If your environment doesn't have an OS keychain for `mppx account create`, create a
+test-only private key and pass it through the repository root `.env`:
+
+```bash
+openssl rand -hex 32
+```
+
+Add it to `../../../.env` with a `0x` prefix:
+
+```bash
+MPPX_PRIVATE_KEY=0x...
+```
+
+View the corresponding account address and fund it with Tempo testnet funds:
+
+```bash
+make wallet-address
+make wallet-fund
+```
+
+Then call the paid endpoint with the local client:
+
+```bash
+make client
+# or target another URL
+pnpm run client -- http://localhost:4242/paid
 ```
 
 ## Development commands

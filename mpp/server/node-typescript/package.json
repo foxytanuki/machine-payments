@@ -4,16 +4,19 @@
   "type": "module",
   "description": "MPP REST API sample with Stripe Payment Tokens using Hono",
   "scripts": {
-    "dev": "tsx main.ts",
+    "dev": "dotenvx run -f ../../../.env -- tsx main.ts",
+    "client": "dotenvx run -f ../../../.env -- tsx client.ts",
+    "wallet:address": "dotenvx run -f ../../../.env -- tsx wallet.ts address",
+    "wallet:fund": "dotenvx run -f ../../../.env -- tsx wallet.ts fund",
     "build": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.0",
-    "dotenv": "^17.4.2",
     "hono": "^4.12.15",
-    "mppx": "^0.6.8",
+    "mppx": "^0.6.15",
     "node-cache": "^5.1.2",
-    "stripe": "^22.1.0"
+    "stripe": "^22.1.0",
+    "viem": "^2.48.8"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -22,6 +25,7 @@
     ]
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.51.2",
     "@biomejs/biome": "^2.4.13",
     "@types/node": "^25.6.0",
     "tsx": "^4.21.0",

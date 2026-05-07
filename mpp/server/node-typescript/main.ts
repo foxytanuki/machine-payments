@@ -1,13 +1,10 @@
 import crypto from "node:crypto";
 import { serve } from "@hono/node-server";
-import { config } from "dotenv";
 import { Hono } from "hono";
 import { Credential } from "mppx";
 import { Mppx, stripe, tempo } from "mppx/server";
 import NodeCache from "node-cache";
 import Stripe from "stripe";
-
-config();
 
 const app = new Hono();
 
@@ -24,6 +21,8 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 const PATH_USD = "0x20c0000000000000000000000000000000000000";
 const PRICE_USD = "1";
+const PRICE_DECIMALS = 6;
+const stripeNetworkId = process.env.STRIPE_NETWORK_ID || "internal";
 
 // Secret used to secure payment challenges
 // https://mpp.dev/protocol/challenges#challenge-binding
@@ -116,7 +115,7 @@ app.get("/paid", async (c) => {
       }),
       stripe.charge({
         client: stripeClient,
-        networkId: process.env.STRIPE_NETWORK_ID!,
+        networkId: stripeNetworkId,
         paymentMethodTypes: ["card", "link"],
       }),
     ],
@@ -124,7 +123,7 @@ app.get("/paid", async (c) => {
   });
 
   const response = await Mppx.compose(
-    mppx.tempo.charge({ amount: PRICE_USD, recipient: recipientAddress }),
+    mppx.tempo.charge({ amount: PRICE_USD, decimals: PRICE_DECIMALS, recipient: recipientAddress }),
     mppx.stripe.charge({ amount: PRICE_USD, currency: "usd" }),
   )(request);
 
