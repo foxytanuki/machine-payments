@@ -1,4 +1,5 @@
 SAMPLES := mpp/server/node-typescript mpp/server/python \
+           hitpaympp/server/node-typescript \
            x402/server/node-typescript x402/server/python
 
 .PHONY: install lint format typecheck test ci

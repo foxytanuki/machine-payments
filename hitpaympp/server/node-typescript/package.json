@@ -1,0 +1,31 @@
+{
+	"name": "hitpay-mpp-node-typescript",
+	"private": true,
+	"type": "module",
+	"description": "HitPay MPP sample using Hono",
+	"scripts": {
+		"dev": "dotenvx run -f ../../../.env -- tsx main.ts",
+		"client": "dotenvx run -f ../../../.env -- tsx client.ts",
+		"build": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@hono/node-server": "^2.0.0",
+		"hono": "^4.12.15",
+		"@hit-pay/mpp": "beta",
+		"@hit-pay/mpp-client": "beta"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@biomejs/biome",
+			"esbuild"
+		]
+	},
+	"devDependencies": {
+		"@dotenvx/dotenvx": "^1.51.2",
+		"@biomejs/biome": "^2.4.13",
+		"@types/node": "^25.6.0",
+		"tsx": "^4.21.0",
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.5"
+	}
+}

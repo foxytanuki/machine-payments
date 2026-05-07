@@ -3,11 +3,13 @@
 This repository demonstrates how to implement machine-to-machine payments using different protocols:
 
 - **[MPP](./mpp/)** — The Machine Payments Protocol using using on-chain crypto payments
+- **[HitPay MPP](./hitpaympp/server/node-typescript/)** — HitPay's early preview MPP sandbox flow using hosted checkout
 - **[x402](./x402/)** — The x402 HTTP payment protocol using on-chain crypto payments
 
 ## Prerequisites
 
 - **Stripe account** with the relevant features enabled. Reach out to [machine-payments@stripe.com](mailto:machine-payments@stripe.com) to get setup.
+- **HitPay sandbox account** with an API key and webhook configured for the HitPay MPP sample.
 - For MPP: Wallet with testnet funds (Tempo Moderato)
 - For x402: Wallet with testnet USDC (Base Sepolia)
 
@@ -50,6 +52,7 @@ make ci
 5. Follow the README in your chosen integration directory for the sample-specific `make run` command and test request:
 - [MPP TypeScript](./mpp/server/node-typescript/)
 - [MPP Python](./mpp/server/python/)
+- [HitPay MPP TypeScript](./hitpaympp/server/node-typescript/)
 - [x402 TypeScript](./x402/server/node-typescript/)
 - [x402 Python](./x402/server/python/)
 
